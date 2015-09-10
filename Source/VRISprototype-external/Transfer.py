@@ -1,15 +1,20 @@
-from decmial import Decimal
+from decimal import Decimal
 import serial
-port = serial.Serial('COM4', 115200) # Serial Port, Baud Rate
-global valuesBeforeAveraging = 6 # Iterations before average
-global numberOfSensors = 3
-global rawValues = []
-global splitValues = []
-global averagedValues = []
+port = serial.Serial('COM4', 115200) #Serial Port, Baud Rate
+global valuesBeforeAveraging #Iterations before average
+global numberOfSensors
+global rawValues
+global splitValues
+global averagedValues
+valuesBeforeAveraging = 6
+numberOfSensors = 3
+rawValues = []
+splitValues = []
+averagedValues = []
 
 for a in xrange(0, valuesBeforeAveraging):
-	rawValues[a] = port.readline() # Assign first few values
-	splitValues.append([]) # Dynamic multidimensional array
+	rawValues[a] = port.readline() #Assign first few values
+	splitValues.append([]) #Dynamic multidimensional array
 	for b in xrange(0, numberOfSensors):
 		splitValues[a].append([]) #Dynamic multidimensional array
 		averagedValues.append([])
@@ -42,7 +47,7 @@ def average(valuesToAverage):
 	return averagedValues
 
 def toString(averagedValues):
-		print "toString"
+	print "toString"
 	outputLine = ""
 	for ypr in averagedValues:
 		for value in ypr:
@@ -52,14 +57,14 @@ def toString(averagedValues):
 	return outputLine
 
 while 1:
-		try:
-			file = open('Transfer.txt', 'w')
-			file.write("")
-			final = getAverage()
-			print final
-			file.write(final)
-			file.close()
-		except: IOError
+        try:
+                file = open('Transfer.txt', 'w')
+		file.write("")
+		final = getAverage()
+		print final
+		file.write(final)
+		file.close()
+	except: IOError
 		
 # Data structure for splitValues
 # [
