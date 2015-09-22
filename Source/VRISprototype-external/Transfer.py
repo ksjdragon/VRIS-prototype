@@ -1,101 +1,54 @@
-from decimal import Decimal
 import serial
-port = serial.Serial('COM4', 115200) #Serial Port, Baud Rate
-global valuesBeforeAveraging #Iterations before average
-global numberOfSensors
-global rawValues
-global splitValues
-global averagedValues
+port = serial.Serial('COM4', 115200)
 valuesBeforeAveraging = 6
 numberOfSensors = 3
-rawValues = []
 splitValues = []
-averagedValues = []
-
-for a in xrange(0, valuesBeforeAveraging):
-	rawValues[a] = port.readline() #Assign first few values
-	splitValues.append([]) #Dynamic multidimensional array
-	for b in xrange(0, numberOfSensors):
-		splitValues[a].append([]) #Dynamic multidimensional array
-		averagedValues.append([])
-
-def getAverage():
-	return toString(average(split(getNewValue())))
+nan = ['NAN','NA']
 
 def getNewValue():
-	print ser.readline()
-	rawValues.append(ser.readline())
-	rawValues.pop(0)
-	return rawValues
-		
-def split(valuesToSplit):
-	for entryNum, entry in enumerate(valuesToSplit):
-		for yprNum, ypr in enumerate(newEntry.split(":")):
-			for valueNum, value in enumerate(values.split(",")):
-				splitValues[entryNum][yprNum][valueNum] = Decimal(value)
-	return splitValues
- 
-def average(valuesToAverage):
-	averagedValue = Decimal(0.0)
-	for yprSetNum, yprSet in enumerate(valuesToAverage[0]):
-		for valueNum, value in enumerate(yprSet):
-			for entryNum in xrange(0,6):
-				averagedValue += averagedValue + Decimal(valuesToAverage[yprSetNum][valueNum][entryNum]) 
-			averagedValue = averagedValue / 6
-			averagedValue = averagedValues[valueNum][entryNum]
-			averagedValue = Decimal(0)
-	return averagedValues
+	newRead = port.readline()[:-2]
+	print newRead
+	# if nan[0] or nan[1] in newRead:
+	# 	print "FIFO Buffer Overflow"
+	# 	#print newRead
+	# 	getNewValue()
+	# else:
+	return newRead
 
-def toString(averagedValues):
-	print "toString"
+def getNewAverage(newValue):
+	global splitValues
+	average = 0.0
 	outputLine = ""
-	for ypr in averagedValues:
-		for value in ypr:
-			outputLine = outputLine + str(value) + ","
-		outputLine = outputLine + ":"
+	averageSetLength = len(splitValues)
+	if averageSetLength == valuesBeforeAveraging:
+		del splitValues[0]
+	print averageSetLength
+	splitValues.append([]) # Append new trial
+
+	for yprNum, ypr in enumerate(newValue.split(":")): # For each sensor/YPR set
+		splitValues[averageSetLength].append([]) # Append new array 
+
+		for valueNum, value in enumerate(ypr.split(",")): # For each value in YPR set
+			splitValues[averageSetLength][yprNum].append(float(value)) # Append value to array
+
+			for entryNum in xrange(0, averageSetLength + 1): #For all trials
+				average += splitValues[entryNum][yprNum][valueNum]	# Add all x,y,z values
+			average = average / (averageSetLength + 1) # Divide by number of trials
+			outputLine = outputLine + str(average)[:str(average).find('.') + 4] + ","
+			average = 0.0
+		outputLine = outputLine[:-1] + ":"
 	outputLine = outputLine[:-1]
+
 	return outputLine
 
 while 1:
-        try:
-                file = open('Transfer.txt', 'w')
-		file.write("")
-		final = getAverage()
+	try:
+		file = open('Transfer.txt','w')
+		file.write('')
+
+		newRead = getNewValue()
+		final = getNewAverage(newRead)
 		print final
 		file.write(final)
 		file.close()
 	except: IOError
-		
-# Data structure for splitValues
-# [
-#   [
-#     [value,value,value],
-#     [value,value,value],
-#     [value,value,value],
-#   ],
-#   [
-#     [value,value,value],
-#     [value,value,value],
-#     [value,value,value],
-#   ],
-#   [
-#     [value,value,value],
-#     [value,value,value],
-#     [value,value,value],
-#   ],
-#   [
-#     [value,value,value],
-#     [value,value,value],
-#     [value,value,value],
-#   ],
-#   [
-#     [value,value,value],
-#     [value,value,value],
-#     [value,value,value],
-#   ],
-#   [
-#     [value,value,value],
-#     [value,value,value],
-#     [value,value,value],
-#   ],
-# ]
