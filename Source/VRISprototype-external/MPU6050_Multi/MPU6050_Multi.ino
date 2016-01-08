@@ -5,7 +5,7 @@
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 
-#define NUMBER_OF_SENSORS 3 //// YOU MAY NEED TO CHANGE THIS
+#define NUMBER_OF_SENSORS 3 /// YOU MAY NEED TO CHANGE THIS
 
 // Default I2C address is 0x68
 // AD0 LOW(0) = 0x68 (Default for SparkFun breakout and InvenSense evaluation board)
