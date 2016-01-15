@@ -71,12 +71,6 @@ void setup() {
     mpu.initialize();  // Intialize device.
 
     devStatus = mpu.dmpInitialize(); // Load and configure the DMP. (Digital Motion Processor)
-    
-    // Gyroscope offsets. (Change if necessary)
-    mpu.setXGyroOffset(220);
-    mpu.setYGyroOffset(76);
-    mpu.setZGyroOffset(-85);
-    mpu.setZAccelOffset(1788);
 
     // Check success of DMP.
     if (devStatus == 0) {
@@ -144,3 +138,4 @@ void loop() {
   }
   Serial.println(final.substring(0, final.length() - 1)); // Prints and removes extra colon.
 }
+
